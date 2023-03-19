@@ -104,6 +104,12 @@ def sell_stock():
     f2.close()
     f1.write(sold)
     f1.close()
+    if(gain > 0):
+        print(f"{bcolors.BOLD}{bcolors.OKGREEN}Sold: {stock_sold}, Gain: {gain}{bcolors.ENDC}")
+    if(gain < 0):
+        print(f"{bcolors.BOLD}{bcolors.HEADER}Sold: {stock_sold}, Gain: {gain}{bcolors.ENDC}")
+    if(gain == 0):
+        print(f"{bcolors.BOLD}{bcolors.OKCYAN}Sold: {stock_sold}, Gain: {gain}{bcolors.ENDC}")
 
 
 def plot_my_stocks(my_stocks):
