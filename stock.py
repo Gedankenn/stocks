@@ -54,12 +54,57 @@ def read_tickets():
 
 def save_buy_stock():
     f = open("my_stocks/papers.txt","a")
-    line = "\nSYMBOL:"+(str(input("stock symbol: ")))+", "
+    line = "SYMBOL:"+(str(input("stock symbol: ")))+", "
     line = line + "QUANTITY:"+str(input("Quantity: "))+", "
     line = line + "BUY_PRICE:"+str(input("BUY Price: "))+", "
-    line = line + "BUY_DATE:"+str(date.today().strftime("%Y-%m-%d"))
+    line = line + "BUY_DATE:"+str(date.today().strftime("%Y-%m-%d"))+"\n"
     f.write(line)
     f.close()
+
+def sell_stock():
+    f1 = open("my_stocks/history.txt","a")
+    f2 = open("my_stocks/papers.txt","r")
+    stock_sold = str(input("Stock Symbol: "))
+    quantity = int(input("Quantity: "))
+    sold_price = str(input("Sold Price: "))
+
+    #Read stocks_file for search the stock sold
+    stock_papers = f2.readlines()
+    line = ""
+    for stock in stock_papers:
+        l1 = stock.split(",")
+        stock_read = l1[0].split(":")[1]
+        if(stock_read == stock_sold):
+            l2 = ""
+            l2 = l2 + l1[0] + ", "
+            quant_read = l1[1].split(":")[1]
+            buy_price = l1[2].split(":")[1]
+            if(int(quant_read) < quantity):
+                print(f"{bcolors.BOLD}{bcolors.HEADER} Wrong quantity sold, do again")
+                break
+            if(int(quant_read) > quantity):
+                l2 = l2 + "QUANTITY: " + str( int(quant_read) - quantity) + ", "
+                l2 = l2 + l1[2] + ", "
+                l2 = l2 + l1[3]
+                line = line + l2
+        else:
+            line = line + stock
+    
+    sold = "SYMBOL:"+ stock_sold +", "
+    sold = sold + "QUANTITY:"+ str(quantity) +", "
+    sold = sold + "SOLD_PRICE:"+ sold_price +", "
+    gain = ((float(sold_price) - float(buy_price))*(float(quant_read) -float(quantity)))
+    gain = "{:.2f}".format(gain)
+    sold = sold + "GAIN: " + str(gain) +", "
+    sold = sold + "SOLD_DATE:"+str(date.today().strftime("%Y-%m-%d"))+"\n"
+
+    f2.close()
+    f2 = open("my_stocks/papers.txt","w")
+    f2.write(line)
+    f2.close()
+    f1.write(sold)
+    f1.close()
+
 
 def plot_my_stocks(my_stocks):
     for i in range(len(my_stocks["SYMBOL"])):
@@ -80,6 +125,8 @@ def plot_my_stocks(my_stocks):
         config = {
             'width': 100,
             'height': 20,
+            'x_label': "Time",
+            'y_label': 'R$',
             'colors': [asciiplot.green,
                         asciiplot.blue],
             'fg_color': [asciiplot.green]
@@ -115,7 +162,8 @@ def menu(stocks, my_stocks):
     print("1 - Get the last month history for ticket ('Brasil only')")
     print("2 - Read Tickets owned")
     print("3 - Save buy operation")
-    print("4 - Plot my stocks")
+    print("4 - Save Sold operation")
+    print("5 - Plot my stocks")
     
     print("0 - To Exit")
     print(f"{bcolors.ENDC}")
@@ -134,13 +182,20 @@ def menu(stocks, my_stocks):
         get_last_month_history_stock(ticket)
     
     elif choice == '2':
+        clear_terminal()
         my_stocks = read_tickets()
         print(my_stocks)
     
     elif choice == '3':
+        clear_terminal()
         save_buy_stock()
     
-    elif choice == "4":
+    elif choice == '4':
+        clear_terminal()
+        sell_stock()
+    
+    elif choice == "5":
+        clear_terminal()
         my_stocks = read_tickets()
         plot_my_stocks(my_stocks)
 
