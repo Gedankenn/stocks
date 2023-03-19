@@ -83,7 +83,7 @@ def sell_stock():
                 print(f"{bcolors.BOLD}{bcolors.HEADER} Wrong quantity sold, do again")
                 break
             if(int(quant_read) > quantity):
-                l2 = l2 + "QUANTITY: " + str( int(quant_read) - quantity) + ", "
+                l2 = l2 + "QUANTITY:" + str( int(quant_read) - quantity) + ", "
                 l2 = l2 + l1[2] + ", "
                 l2 = l2 + l1[3]
                 line = line + l2
@@ -95,7 +95,7 @@ def sell_stock():
     sold = sold + "SOLD_PRICE:"+ sold_price +", "
     gain = ((float(sold_price) - float(buy_price))*(float(quant_read) -float(quantity)))
     gain = "{:.2f}".format(gain)
-    sold = sold + "GAIN: " + str(gain) +", "
+    sold = sold + "GAIN:" + str(gain) +", "
     sold = sold + "SOLD_DATE:"+str(date.today().strftime("%Y-%m-%d"))+"\n"
 
     f2.close()
