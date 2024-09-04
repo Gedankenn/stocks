@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import investpy as inv
 import yfinance as yfi
 from datetime import datetime, date, timedelta
