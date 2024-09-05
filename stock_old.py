@@ -7,8 +7,6 @@ import numpy as np
 import pandas as pd
 import asciichartpy as asciiplot
 import os
-import matplotlib.pyplot as plt
-import mplcyberpunk
 
 class bcolors:
     HEADER = '\033[95m'
@@ -21,7 +19,6 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-plt.style.use("cyberpunk")
 
 def clear_terminal():
     if os.name == "nt":
@@ -31,7 +28,6 @@ def clear_terminal():
 
 def get_all_stocks():
     stocks = inv.get_stocks(country = 'brazil')
-    # print(stocks["symbol"])
     return stocks
 
 def get_last_month_history_stock(ticket):
