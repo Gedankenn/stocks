@@ -13,6 +13,9 @@ import sys
 
 
 def menu_listing():
+    '''
+    This function will display the main menu
+    '''
     print(f"{bcolors.OKGREEN}{bcolors.BOLD}Broker Menu{bcolors.ENDC}")
     print(f"{bcolors.OKGREEN}{bcolors.BOLD}h{bcolors.ENDC} - Display this help menu")
     print(f"{bcolors.OKGREEN}{bcolors.BOLD}a{bcolors.ENDC} - Add a stock to the portfolio")
@@ -41,6 +44,9 @@ def menu_helper():
     print(f"{bcolors.OKGREEN}{bcolors.BOLD}broker.py -q{bcolors.ENDC}                                       - Quit the broker")
 
 def menu_navigation(option, stocks):
+    '''
+        This function will navigate through the options
+    '''
     if option == "a":
         print("Adding a stock")
     elif option == "r":
@@ -61,6 +67,9 @@ def menu_navigation(option, stocks):
         sys.exit(1)
 
 def load_my_stocks():
+    '''
+        This function will load the stocks from the file
+    '''
     stocks = st.read_tickets()
     my_stocks = []
     for i in range(len(stocks["SYMBOL"])):
@@ -68,6 +77,9 @@ def load_my_stocks():
     return my_stocks
 
 def menu(args):
+    '''
+        The main menu will be here
+    '''
     option = "-q"
     if len(args) <= 1:
         menu_helper()
@@ -85,10 +97,10 @@ def menu(args):
         menu_navigation(option, stocks)
         sys.exit(0)
 
-
-
-
 def banner():
+    '''
+        This function will display the banner
+    '''
     print(f"{bcolors.OKGREEN}{bcolors.BOLD}"
     "   | |__  _ __ ___ | | _____ _ __\n"
     "   | '_ \\| '__/ _ \\| |/ / _ \\ '__|\n"
@@ -100,6 +112,9 @@ def banner():
 
 
 def main():
+    '''
+        The main function will be here
+    '''
     banner()
     args = sys.argv
     menu(args)

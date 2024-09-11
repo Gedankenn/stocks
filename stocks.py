@@ -12,6 +12,9 @@ import asciichartpy as asciiplot
 from bcolors import bcolors
 
 class Stock:
+    '''
+    This class will handle all the stock operations
+    '''
     def __init__(self, symbol='', quantity=1, buy_price=0, buy_date="", sell_price='', sell_date=""):
         self.symbol = symbol
         self.quantity = quantity
@@ -21,16 +24,25 @@ class Stock:
         self.sell_date = sell_date
 
     def get_last_month_history_stock(self):
+        '''
+        This method will return the last month history of the stock
+        '''
         ticket = self.symbol + ".sa"
         ticker = yfi.Ticker(ticket)
         hist = ticker.history(period="1mo")
         return hist
 
     def get_all_stocks(self):
+        '''
+        This method will return all the stocks available in the market
+        '''
         stocks = inv.get_stocks(country = 'brazil')
         return stocks
 
     def __str__(self):
+        '''
+        This method will return the stock information
+        '''
         text = f"{bcolors.BOLD}{bcolors.HEADER} ------ Stock ------{bcolors.ENDC}\n"
         text += f"{bcolors.BOLD}{bcolors.OKGREEN}Symbol: {bcolors.ENDC}{self.symbol.upper()}\n"
         text += f"{bcolors.BOLD}{bcolors.OKGREEN}Quantity: {bcolors.ENDC}{self.quantity}\n"
@@ -42,6 +54,9 @@ class Stock:
         return text
 
     def plot_stock(self, start_date, end_date):
+        '''
+        This method will plot the stock
+        '''
         ticket = self.symbol + ".sa"
         ticker = yfi.Ticker(ticket)
         hist = ticker.history(start=start_date, end=end_date)
@@ -72,6 +87,9 @@ class Stock:
 
 
 def read_tickets():
+    '''
+    This function will read the tickets from the file
+    '''
     f = open("my_stocks/papers.txt","r")
     my_stocks = {"SYMBOL":[],"QUANTITY":[],"BUY_PRICE":[],"BUY_DATE":[],"SELL_PRICE":[],"SELL_DATE":[]}
     lines = f.readlines()
