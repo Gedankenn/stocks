@@ -52,10 +52,7 @@ def menu_navigation(option, stocks):
     elif option == "r":
         print("Removing a stock")
     elif option == "l":
-        print("Listing all owned stocks")
-        for stock in stocks:
-            print(stock)
-
+        print_all_owned_stocks(stocks)
     elif option == "p":
         print("Plotting a stock")
     elif option == "m":
@@ -65,6 +62,14 @@ def menu_navigation(option, stocks):
     else:
         print("Invalid option")
         sys.exit(1)
+
+def print_all_owned_stocks(stocks):
+    '''
+        This function will print all the owned stocks
+    '''
+    print("Listing all owned stocks")
+    for stock in stocks:
+        print(stock)
 
 def load_my_stocks():
     '''
