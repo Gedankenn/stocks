@@ -15,7 +15,7 @@ class Stock:
     '''
     This class will handle all the stock operations
     '''
-    def __init__(self, symbol='', quantity=1, buy_price=0, buy_date="", sell_price='', sell_date=""):
+    def __init__(self, symbol='', quantity='', buy_price='', buy_date="", sell_price='', sell_date=""):
         self.symbol = symbol
         self.quantity = quantity
         self.buy_price = buy_price
@@ -56,6 +56,8 @@ class Stock:
     def plot_stock(self, start_date, end_date):
         '''
         This method will plot the stock
+        @param start_date: The start
+        @param end_date: The end
         '''
         ticket = self.symbol + ".sa"
         ticker = yfi.Ticker(ticket)
@@ -73,7 +75,6 @@ class Stock:
         }
 
         print(f"{bcolors.BOLD}Stock: {self.symbol.upper()}{bcolors.ENDC}")
-
         print(asciiplot.plot(hist, config))
 
 
@@ -89,6 +90,7 @@ class Stock:
 def read_tickets():
     '''
     This function will read the tickets from the file
+    @return: The tickets
     '''
     f = open("my_stocks/papers.txt","r")
     my_stocks = {"SYMBOL":[],"QUANTITY":[],"BUY_PRICE":[],"BUY_DATE":[],"SELL_PRICE":[],"SELL_DATE":[]}
@@ -103,4 +105,37 @@ def read_tickets():
         my_stocks["SELL_PRICE"].append(l1[4].split(":")[1])
         my_stocks["SELL_DATE"].append(l1[5].split(":")[1].strip("\n"))
     return my_stocks
+
+def save_tickets(my_stocks):
+    '''
+    This function will save the tickets to the file
+    @param my_stocks: The stocks to be saved
+    '''
+
+    stocks = ''
+    for i in range(len(my_stocks["SYMBOL"])):
+        stocks += f"SYMBOL:{my_stocks['SYMBOL'][i]},QUANTITY:{my_stocks['QUANTITY'][i]},BUY_PRICE:{my_stocks['BUY_PRICE'][i]},BUY_DATE:{my_stocks['BUY_DATE'][i]},SELL_PRICE:{my_stocks['SELL_PRICE'][i]},SELL_DATE:{my_stocks['SELL_DATE'][i]}\n"
+
+    f = open("my_stocks/papers.txt","w")
+    f.write(stocks)
+    f.close()
+
+def update_history(stock):
+    '''
+    This function will update the history
+    @param stocks: The stocks to be updated
+    '''
+    
+    # verify if my_stocks/history.txt exists
+    try:
+        f = open("my_stocks/history.txt","r")
+        f.close()
+    except:
+        f = open("my_stocks/history.txt","w")
+        f.close()
+
+    f = open("my_stocks/history.txt","a") 
+    text = f"{stock.symbol},{stock.quantity},{stock.buy_price},{stock.buy_date},{stock.sell_price},{stock.sell_date}\n"
+    f.write(text)
+    f.close()
 
