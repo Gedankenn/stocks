@@ -10,6 +10,7 @@ Date: 2024-09-05
 import stocks as st
 from bcolors import bcolors
 import sys
+import datetime as dt
 
 
 def menu_listing():
@@ -24,9 +25,12 @@ def menu_listing():
     print(f"{bcolors.OKGREEN}{bcolors.BOLD}p{bcolors.ENDC} - Plot a stock")
     print(f"{bcolors.OKGREEN}{bcolors.BOLD}m{bcolors.ENDC} - Show the main menu")
     print(f"{bcolors.OKGREEN}{bcolors.BOLD}q{bcolors.ENDC} - Quit the broker")
-    print(f"{bcolors.ENDC}\n\n\n")
+    print(f"{bcolors.ENDC}")
     
-    key = input(f"{bcolors.OKGREEN}{bcolors.BOLD}Enter your choice: {bcolors.ENDC}")
+    key = "-" + str(input(f"{bcolors.OKGREEN}{bcolors.BOLD}Enter your choice: {bcolors.ENDC}"))
+    if key == "-q":
+        sys.exit(0)
+
     return key
 
 def menu_helper():
@@ -42,6 +46,30 @@ def menu_helper():
     print(f"{bcolors.OKGREEN}{bcolors.BOLD}broker.py -p <stock> <start date> <end date>{bcolors.ENDC}       - Plot a stock")
     print(f"{bcolors.OKGREEN}{bcolors.BOLD}broker.py -m{bcolors.ENDC}                                       - Show the main menu")
     print(f"{bcolors.OKGREEN}{bcolors.BOLD}broker.py -q{bcolors.ENDC}                                       - Quit the broker")
+
+def menu_navigation(option, stocks, args):
+    '''
+        This function will navigate through the options
+        @param option: The option to be navigated
+        @param stocks: The stocks to be navigated
+        @param args: The arguments to be used
+    '''
+    if option == "-a":
+        add_stock(stocks, args)
+    elif option == "-r":
+        print("Removing a stock")
+    elif option == "-l":
+        print_all_owned_stocks(stocks)
+    elif option == "-p":
+        print("Plotting a stock")
+    elif option == "-m":
+        print("Showing the main menu")
+    elif option == "-q":
+        save_my_stocks(stocks)
+        print("Quitting the broker")
+    else:
+        print("Invalid option")
+        sys.exit(1)
 
 def print_all_owned_stocks(stocks):
     '''
@@ -74,7 +102,31 @@ def update_history(stocks):
         This function will update the history
         @param stocks: The stocks to be updated
     '''
-    
+
+
+def is_stock_owned(stock, stocks):
+    '''
+        This function will verify if the stock is owned
+        @param stock: The stock to be verified
+        @param stocks: The stocks to be verified
+        @return: True if the stock is owned, False otherwise
+    '''
+    for s in stocks:
+        if s.symbol == stock:
+            return True
+    return False
+
+def validate_date(date):
+    '''
+        This function will validate the date
+        @param date: The date to be validated
+        @return: True if the date is valid, False otherwise
+    '''
+    try:
+        dt.date.fromisoformat(date)
+        return True
+    except:
+        return False
 
 def add_stock(stocks, args):
     '''
@@ -92,38 +144,77 @@ def add_stock(stocks, args):
         stock = input(f"{bcolors.OKGREEN}{bcolors.BOLD}Enter the stock symbol: {bcolors.ENDC}")
         quantity = input(f"{bcolors.OKGREEN}{bcolors.BOLD}Enter the quantity: {bcolors.ENDC}")
         buy_price = input(f"{bcolors.OKGREEN}{bcolors.BOLD}Enter the buy price: {bcolors.ENDC}")
-        buy_date = input(f"{bcolors.OKGREEN}{bcolors.BOLD}Enter the buy date: {bcolors.ENDC}")
+        buy_date = input(f"{bcolors.OKGREEN}{bcolors.BOLD}Enter the buy date(Y-M-D): {bcolors.ENDC}")
     else:
         stock = args[2]
         quantity = args[3]
         buy_price = args[4]
         buy_date = args[5]
-
-    stocks.append(st.Stock(stock, quantity, buy_price, buy_date))
-
-def menu_navigation(option, stocks, args):
-    '''
-        This function will navigate through the options
-        @param option: The option to be navigated
-        @param stocks: The stocks to be navigated
-        @param args: The arguments to be used
-    '''
-    if option == "-a":
-        add_stock(stocks, args)
-    elif option == "-r":
-        print("Removing a stock")
-    elif option == "-l":
-        print_all_owned_stocks(stocks)
-    elif option == "-p":
-        print("Plotting a stock")
-    elif option == "-m":
-        print("Showing the main menu")
-    elif option == "-q":
-        save_my_stocks(stocks)
-        print("Quitting the broker")
-    else:
-        print("Invalid option")
+  
+    if validate_date(buy_date) == False:
+        print(f"{bcolors.FAIL}Invalid date{bcolors.ENDC}")
         sys.exit(1)
+
+    stock = stock.upper()
+    
+    if is_stock_owned(stock, stocks) == True:
+        print(f"{bcolors.FAIL}Stock already owned{bcolors.ENDC}")
+        sys.exit(1)
+
+    if st.is_stock_listed(stock) == False:
+        print(f"{bcolors.FAIL}Stock not listed{bcolors.ENDC}")
+        sys.exit(1)
+
+    if stock == '' or quantity == '' or buy_price == '' or buy_date == '':
+        print(f"{bcolors.FAIL}Invalid stock{bcolors.ENDC}")
+        sys.exit(1)
+    stocks.append(st.Stock(stock, quantity, buy_price, buy_date))
+    print(f"{bcolors.OKGREEN}Stock added{bcolors.ENDC}")
+    st.save_tickets(stocks)
+
+def sell_stock(stocks, args):
+    '''
+        This function will sell a stock from the portfolio
+        @param stocks: The stocks to be sold
+        @param args: The arguments
+    '''
+    stock = ''
+    sell_price = ''
+    sell_date = ''
+
+    if args == '':
+        stock = input(f"{bcolors.OKGREEN}{bcolors.BOLD}Enter the stock symbol: {bcolors.ENDC}")
+        sell_price = input(f"{bcolors.OKGREEN}{bcolors.BOLD}Enter the sell price: {bcolors.ENDC}")
+        sell_date = input(f"{bcolors.OKGREEN}{bcolors.BOLD}Enter the sell date(Y-M-D): {bcolors.ENDC}")
+    else:
+        stock = args[2]
+        sell_price = args[3]
+        sell_date = args[4]
+
+    if validate_date(sell_date) == False:
+        print(f"{bcolors.FAIL}Invalid date{bcolors.ENDC}")
+        sys.exit(1)
+
+    stock = stock.upper()
+    
+    if is_stock_owned(stock, stocks) == False:
+        print(f"{bcolors.FAIL}Stock not owned{bcolors.ENDC}")
+        sys.exit(1)
+
+    if stock == '' or sell_price == '' or sell_date == '':
+        print(f"{bcolors.FAIL}Invalid stock{bcolors.ENDC}")
+        sys.exit(1)
+    for s in stocks:
+        if s.symbol == stock:
+            # Remove the stock from the list
+            stocks.remove(s)
+            # Add the stock to the history
+            st.update_history(s)
+            print(f"{bcolors.OKGREEN}Stock sold{bcolors.ENDC}")
+            st.save_tickets(stocks)
+            return
+    print(f"{bcolors.FAIL}Stock not found{bcolors.ENDC}")
+
 
 def menu(args):
     '''
@@ -132,21 +223,21 @@ def menu(args):
     '''
     option = "-q"
     if len(args) <= 1:
-        menu_helper()
         option = menu_listing()
         args = ''
+
+    elif args[1] == "-h":
+        menu_helper()
+        sys.exit(0)
 
     elif len(args) >= 2:
         option = args[1]
     
-    if args[1] == "-h": 
-        menu_helper()
-        sys.exit(0)
-    
-    else:
-        stocks = load_my_stocks()
+    stocks = load_my_stocks()
+    while option != "-q":
         menu_navigation(option, stocks, args)
-        sys.exit(0)
+        option = menu_listing()
+    sys.exit(0)
 
 def banner():
     '''
@@ -158,7 +249,7 @@ def banner():
     "   | |_) | | | (_) |   <  __/ |\n"
     "   |_.__/|_|  \\___/|_|\\_\\___|_|")
     print(f"{bcolors.OKGREEN}{bcolors.BOLD}   Made by Fabio Slika Stella!{bcolors.ENDC}")
-    print(f"{bcolors.ENDC}\n\n\n")
+    print(f"{bcolors.ENDC}\n")
 
 
 

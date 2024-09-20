@@ -10,6 +10,7 @@ import yfinance as yfi
 from datetime import datetime, date, timedelta
 import asciichartpy as asciiplot
 from bcolors import bcolors
+import os
 
 class Stock:
     '''
@@ -31,13 +32,6 @@ class Stock:
         ticker = yfi.Ticker(ticket)
         hist = ticker.history(period="1mo")
         return hist
-
-    def get_all_stocks(self):
-        '''
-        This method will return all the stocks available in the market
-        '''
-        stocks = inv.get_stocks(country = 'brazil')
-        return stocks
 
     def __str__(self):
         '''
@@ -86,12 +80,38 @@ class Stock:
         end_date = date.today()
         self.plot_stock(start_date, end_date)
 
+def verify_folder():
+    '''
+    This function will verify if the folder my_stocks exists
+    '''
+    if not os.path.exists("my_stocks"):
+        os.mkdir("my_stocks")
+
+def verify_files():
+    '''
+    This function will verify if the files exist
+    '''
+    verify_folder()
+    try:
+        f = open("my_stocks/papers.txt","r")
+        f.close()
+    except:
+        f = open("my_stocks/papers.txt","w")
+        f.close()
+
+    try:
+        f = open("my_stocks/history.txt","r")
+        f.close()
+    except:
+        f = open("my_stocks/history.txt","w")
+        f.close()
 
 def read_tickets():
     '''
     This function will read the tickets from the file
     @return: The tickets
     '''
+    verify_files()
     f = open("my_stocks/papers.txt","r")
     my_stocks = {"SYMBOL":[],"QUANTITY":[],"BUY_PRICE":[],"BUY_DATE":[],"SELL_PRICE":[],"SELL_DATE":[]}
     lines = f.readlines()
@@ -113,9 +133,8 @@ def save_tickets(my_stocks):
     '''
 
     stocks = ''
-    for i in range(len(my_stocks["SYMBOL"])):
-        stocks += f"SYMBOL:{my_stocks['SYMBOL'][i]},QUANTITY:{my_stocks['QUANTITY'][i]},BUY_PRICE:{my_stocks['BUY_PRICE'][i]},BUY_DATE:{my_stocks['BUY_DATE'][i]},SELL_PRICE:{my_stocks['SELL_PRICE'][i]},SELL_DATE:{my_stocks['SELL_DATE'][i]}\n"
-
+    for i in range(len(my_stocks)):
+        stocks += f"SYMBOL:{my_stocks[i].symbol}, QUANTITY:{my_stocks[i].quantity}, BUY_PRICE:{my_stocks[i].buy_price}, BUY_DATE:{my_stocks[i].buy_date}, SELL_PRICE:{my_stocks[i].sell_price}, SELL_DATE:{my_stocks[i].sell_date}\n"
     f = open("my_stocks/papers.txt","w")
     f.write(stocks)
     f.close()
@@ -125,17 +144,27 @@ def update_history(stock):
     This function will update the history
     @param stocks: The stocks to be updated
     '''
-    
-    # verify if my_stocks/history.txt exists
-    try:
-        f = open("my_stocks/history.txt","r")
-        f.close()
-    except:
-        f = open("my_stocks/history.txt","w")
-        f.close()
-
     f = open("my_stocks/history.txt","a") 
     text = f"{stock.symbol},{stock.quantity},{stock.buy_price},{stock.buy_date},{stock.sell_price},{stock.sell_date}\n"
     f.write(text)
     f.close()
 
+def get_all_stocks():
+    '''
+    This method will return all the stocks available in the market
+    '''
+    stocks = inv.get_stocks(country = 'brazil')
+    return stocks
+
+def is_stock_listed(stock):
+    '''
+    This function will verify if the stock is listed
+    @param stock: The stock to be verified
+    @return: True if the stock is listed, False otherwise
+    '''
+    all_stocks = get_all_stocks().symbol
+    stock = stock.upper()
+    for s in all_stocks:
+        if s == stock:
+            return True
+    return False
