@@ -10,6 +10,7 @@ import yfinance as yfi
 from datetime import datetime, date, timedelta
 import asciichartpy as asciiplot
 from bcolors import bcolors
+from yahooquery import Ticker as yq
 import os
 
 class Stock:
@@ -33,6 +34,21 @@ class Stock:
         hist = ticker.history(period="1mo")
         return hist
 
+    def get_stock_price(self):
+        '''
+        This method will return the stock price
+        '''
+        ticket = self.symbol + ".sa"
+        ticker = yfi.Ticker(ticket)
+        previous_close = 0
+       
+        try:
+            previous_close = yq(self.symbol).history(period='1d')['close'][-1]
+        except:
+            previous_close = ticker.history(period="1d")["Close"][-1]
+
+        return previous_close
+
     def __str__(self):
         '''
         This method will return the stock information
@@ -44,6 +60,7 @@ class Stock:
         text += f"{bcolors.BOLD}{bcolors.OKGREEN}Buy Date: {bcolors.ENDC}{self.buy_date}\n"
         text += f"{bcolors.BOLD}{bcolors.OKGREEN}Sell Price: {bcolors.ENDC}{self.sell_price}\n"
         text += f"{bcolors.BOLD}{bcolors.OKGREEN}Sell Date: {bcolors.ENDC}{self.sell_date}\n"
+        text += f"{bcolors.BOLD}{bcolors.HEADER}Price: {bcolors.ENDC}{self.get_stock_price()}\n"
         text += f"{bcolors.BOLD}{bcolors.HEADER} -------------------{bcolors.ENDC}\n"
         return text
 

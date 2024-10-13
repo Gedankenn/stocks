@@ -62,6 +62,10 @@ def menu_navigation(option, stocks, args):
         print_all_owned_stocks(stocks)
     elif option == "-p":
         print("Plotting a stock")
+        if len(args) < 5:
+            plot_stock()
+        else:
+            plot_stock(args[2], args[3], args[4])
     elif option == "-m":
         print("Showing the main menu")
     elif option == "-q":
@@ -89,6 +93,40 @@ def load_my_stocks():
     for i in range(len(stocks["SYMBOL"])):
         my_stocks.append(st.Stock(stocks["SYMBOL"][i], stocks["QUANTITY"][i], stocks["BUY_PRICE"][i], stocks["BUY_DATE"][i], stocks["SELL_PRICE"][i], stocks["SELL_DATE"][i]))
     return my_stocks
+
+def plot_stock(stock='', start_date='', end_date=''):
+    '''
+        This function will plot the stock
+        @param stock: The stock to be plotted
+        @param start_date: The start date
+        @param end_date: The end date
+    '''
+    if stock == '':
+        stock = input(f"{bcolors.OKGREEN}{bcolors.BOLD}Enter the stock symbol: {bcolors.ENDC}")
+        start_date = input(f"{bcolors.OKGREEN}{bcolors.BOLD}Enter the start date(Y-M-D): {bcolors.ENDC}")
+        if start_date == '':
+            start_date = dt.date.today() - dt.timedelta(days=365)
+            start_date = start_date.isoformat()
+        end_date = input(f"{bcolors.OKGREEN}{bcolors.BOLD}Enter the end date(Y-M-D): {bcolors.ENDC}")
+        if end_date == '':
+            end_date = dt.date.today()
+            end_date = end_date.isoformat()
+    else:
+        stock = stock
+        start_date = start_date
+        end_date = end_date
+
+    stock = stock.upper()
+    if st.is_stock_listed(stock) == False:
+        print(f"{bcolors.FAIL}Stock not listed{bcolors.ENDC}")
+        sys.exit(1)
+
+    if validate_date(start_date) == False or validate_date(end_date) == False:
+        print(f"{bcolors.FAIL}Invalid date{bcolors.ENDC}")
+        sys.exit(1)
+
+    stock = st.Stock(stock)
+    stock.plot_stock(start_date, end_date)
 
 def save_my_stocks(stocks):
     '''
@@ -126,6 +164,8 @@ def validate_date(date):
         dt.date.fromisoformat(date)
         return True
     except:
+        print(f"{bcolors.FAIL}Invalid date{bcolors.ENDC}")
+        print(f"{bcolors.FAIL}Date format must be Y-M-D{bcolors.ENDC}")
         return False
 
 def add_stock(stocks, args):
