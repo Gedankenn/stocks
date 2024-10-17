@@ -8,7 +8,7 @@ Date: 2024-09-10
 import investpy as inv
 import yfinance as yfi
 from datetime import datetime, date, timedelta
-from uniplot import plot as asciiplot
+import asciichartpy as asciiplot
 from bcolors import bcolors
 from yahooquery import Ticker as yq
 import os
@@ -56,8 +56,8 @@ class Stock:
         ref_price = float(self.buy_price)
 
         text = f"{bcolors.HEADER} --------- Stock ---------\n"
-        aux = f"{bcolors.HEADER}|{bcolors.WARNING}Symbol: {bcolors.OKBLUE}{self.symbol.upper()}{bcolors.ENDC}"
-        text += aux + (" " * (44 - len(aux))) + f"{bcolors.HEADER}|\n"
+        aux = f"{bcolors.HEADER}|{bcolors.WARNING}Symbol: {bcolors.UNDERLINE}{bcolors.OKBLUE}{self.symbol.upper()}"
+        text += aux + (" " * (39 - len(aux))) + f"{bcolors.HEADER}|\n"
         
         aux = f"{bcolors.HEADER}|{bcolors.WARNING}Quantity: {bcolors.ENDC}{self.quantity}"
         text += aux + " " * (39 - len(aux)) + f"{bcolors.HEADER}|\n"
@@ -96,28 +96,6 @@ class Stock:
             aux = f"{bcolors.HEADER}|{bcolors.WARNING}Loss: {bcolors.FAIL}{loss} {variation}%"
             text += aux + " " * (40 - len(aux)) + f"{bcolors.HEADER}|\n"
         
-        if self.symbol[-2:] == "11":
-            # If the stock is a FII
-            ticker = yfi.Ticker(self.symbol + ".SA")
-            dividend = ticker.dividends
-            earnings = 0
-            last_dividend = dividend.iloc[-1]
-            last_dividend = "{:.2f}".format(float(last_dividend))
-            aux = f"{bcolors.HEADER}|{bcolors.WARNING}Last Dividend: {bcolors.OKGREEN}{last_dividend}"
-            text += aux + " " * (40 - len(aux)) + f"{bcolors.HEADER}|\n"
-
-            if len(dividend) > 0:
-                # get the buy_date in the format %Y-%m 
-                buy_date = datetime.strptime(self.buy_date, "%Y-%m-%d")
-                buy_date = buy_date.strftime("%Y-%m")
-
-                dividend_list = dividend[dividend.index > buy_date]
-                for div in dividend_list:
-                    earnings += float(div)
-
-                earnings = "{:.2f}".format(earnings)
-                aux = f"{bcolors.HEADER}|{bcolors.WARNING}Dividend Gains: {bcolors.OKGREEN}{earnings}"
-                text += aux + " " * (40 - len(aux)) + f"{bcolors.HEADER}|\n"
         text += f"{bcolors.HEADER}"
         text += "-" * 26
         text += f"{bcolors.ENDC}\n"
@@ -134,8 +112,18 @@ class Stock:
         hist = ticker.history(start=start_date, end=end_date)
         hist = hist["Close"]
 
+        config = {
+            'width': 100,
+            'height': 20,
+            'x_label': 'Time',
+            'y_label': 'Price',
+            'colors': [asciiplot.lightcyan,
+                       asciiplot.lightmagenta],
+            'fg_color': [asciiplot.green] # light green foreground
+        }
+
         print(f"{bcolors.BOLD}Stock: {self.symbol.upper()}{bcolors.ENDC}")
-        print(f"{asciiplot(hist, color="green", height=20, width=100)}")
+        print(asciiplot.plot(hist, config))
 
 
     def plot_stock_since_buy(self):
