@@ -24,6 +24,10 @@ class Stock:
         self.buy_date = buy_date
         self.sell_price = sell_price
         self.sell_date = sell_date
+        self.dividends = ''
+        self.earnings = ''
+        self.last_dividend = ''
+        self.previous_close = ''
 
     def get_last_month_history_stock(self):
         '''
@@ -48,11 +52,38 @@ class Stock:
         previous_close = "{:.2f}".format(previous_close)
         return previous_close
 
+    def update_stock_info(self):
+        '''
+        This method will update the stock information
+        '''
+        ticket = self.symbol + ".sa"
+        ticker = yfi.Ticker(ticket)
+        self.previous_close = ticker.history(period="1d")["Close"].iloc[-1]
+        self.previous_close = "{:.2f}".format(self.previous_close)
+
+        if self.symbol[-2:] == "11":
+            # If the stock is a FII
+            dividend = ticker.dividends
+            if len(dividend) > 0:
+                # get the buy_date in the format %Y-%m 
+                self.earnings = 0
+                self.last_dividend = dividend.iloc[-1]
+                self.last_dividend = "{:.2f}".format(float(self.last_dividend))
+                buy_date = datetime.strptime(self.buy_date, "%Y-%m-%d")
+                buy_date = buy_date.strftime("%Y-%m")
+
+                dividend_list = dividend[dividend.index > buy_date]
+                for div in dividend_list:
+                    self.earnings += float(div)*float(self.quantity)
+
+                self.earnings = "{:.2f}".format(self.earnings)
+
     def __str__(self):
         '''
         This method will return the stock information
         '''
-        price = float(self.get_stock_price())
+        self.update_stock_info()
+        price = float(self.previous_close)
         ref_price = float(self.buy_price)
 
         text = f"{bcolors.HEADER} --------- Stock ---------\n"
@@ -96,27 +127,13 @@ class Stock:
             aux = f"{bcolors.HEADER}|{bcolors.WARNING}Loss: {bcolors.FAIL}{loss} {variation}%"
             text += aux + " " * (40 - len(aux)) + f"{bcolors.HEADER}|\n"
         
-        if self.symbol[-2:] == "11":
+        if self.last_dividend != '':
             # If the stock is a FII
-            ticker = yfi.Ticker(self.symbol + ".SA")
-            dividend = ticker.dividends
-            earnings = 0
-            last_dividend = dividend.iloc[-1]
-            last_dividend = "{:.2f}".format(float(last_dividend))
-            aux = f"{bcolors.HEADER}|{bcolors.WARNING}Last Dividend: {bcolors.OKGREEN}{last_dividend}"
+            aux = f"{bcolors.HEADER}|{bcolors.WARNING}Last Dividend: {bcolors.OKGREEN}{self.last_dividend}"
             text += aux + " " * (40 - len(aux)) + f"{bcolors.HEADER}|\n"
 
-            if len(dividend) > 0:
-                # get the buy_date in the format %Y-%m 
-                buy_date = datetime.strptime(self.buy_date, "%Y-%m-%d")
-                buy_date = buy_date.strftime("%Y-%m")
-
-                dividend_list = dividend[dividend.index > buy_date]
-                for div in dividend_list:
-                    earnings += float(div)
-
-                earnings = "{:.2f}".format(earnings)
-                aux = f"{bcolors.HEADER}|{bcolors.WARNING}Dividend Gains: {bcolors.OKGREEN}{earnings}"
+            if self.earnings != '':
+                aux = f"{bcolors.HEADER}|{bcolors.WARNING}Dividend Gains: {bcolors.OKGREEN}{self.earnings}"
                 text += aux + " " * (40 - len(aux)) + f"{bcolors.HEADER}|\n"
         text += f"{bcolors.HEADER}"
         text += "-" * 26

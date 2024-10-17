@@ -81,8 +81,36 @@ def print_all_owned_stocks(stocks):
         @param stocks: The stocks to be printed
     '''
     print("Listing all owned stocks")
+    spent = 0
+    earned = 0
+    dividends = 0
     for stock in stocks:
         print(stock)
+        spent += float(stock.buy_price) * float(stock.quantity)
+        earned += float(stock.previous_close) * float(stock.quantity)
+        if stock.dividends != '':
+            dividends += float(stock.dividends)
+   
+    
+    text = f"{bcolors.HEADER} --------- Resume ---------\n"
+    
+    spent = "{:.2f}".format(spent)
+    aux = (f"{bcolors.HEADER}|{bcolors.WARNING}{bcolors.BOLD}Spent: {bcolors.ENDC}{spent}")
+    text += aux + " " * (44 - len(aux)) + f"{bcolors.HEADER}|\n"
+    earned = "{:.2f}".format(earned)
+    if earned >= spent:
+        aux = (f"{bcolors.HEADER}|{bcolors.WARNING}{bcolors.BOLD}Earned: {bcolors.OKGREEN}{earned}")
+        text += aux + " " * (45 - len(aux)) + f"{bcolors.HEADER}|\n"
+    else:
+        aux = (f"{bcolors.HEADER}|{bcolors.WARNING}{bcolors.BOLD}Earned: {bcolors.FAIL}{earned}")
+        text += aux + " " * (45 - len(aux)) + f"{bcolors.HEADER}|\n"
+
+    dividends = "{:.2f}".format(dividends)
+    aux = (f"{bcolors.HEADER}|{bcolors.WARNING}{bcolors.BOLD}Dividends: {bcolors.OKGREEN}{dividends}")
+    text += aux + " " * (45 - len(aux)) + f"{bcolors.HEADER}|"
+    print(text)
+    print("-" * 27)
+    print("\n")
 
 def load_my_stocks():
     '''
