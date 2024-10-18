@@ -99,10 +99,10 @@ def print_all_owned_stocks(stocks):
     text += aux + " " * (44 - len(aux)) + f"{bcolors.HEADER}|\n"
     earned = "{:.2f}".format(earned)
     if earned >= spent:
-        aux = (f"{bcolors.HEADER}|{bcolors.WARNING}{bcolors.BOLD}Earned: {bcolors.OKGREEN}{earned}")
+        aux = (f"{bcolors.HEADER}|{bcolors.WARNING}{bcolors.BOLD}Wallet: {bcolors.OKGREEN}{earned}")
         text += aux + " " * (45 - len(aux)) + f"{bcolors.HEADER}|\n"
     else:
-        aux = (f"{bcolors.HEADER}|{bcolors.WARNING}{bcolors.BOLD}Earned: {bcolors.FAIL}{earned}")
+        aux = (f"{bcolors.HEADER}|{bcolors.WARNING}{bcolors.BOLD}Wallet: {bcolors.FAIL}{earned}")
         text += aux + " " * (45 - len(aux)) + f"{bcolors.HEADER}|\n"
 
     dividends = "{:.2f}".format(dividends)

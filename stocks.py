@@ -85,19 +85,25 @@ class Stock:
         self.update_stock_info()
         price = float(self.previous_close)
         ref_price = float(self.buy_price)
+        total = float(self.quantity) * ref_price
+        total = "{:.2f}".format(total)
 
         text = f"{bcolors.HEADER} --------- Stock ---------\n"
         aux = f"{bcolors.HEADER}|{bcolors.WARNING}Symbol: {bcolors.OKBLUE}{self.symbol.upper()}{bcolors.ENDC}"
         text += aux + (" " * (44 - len(aux))) + f"{bcolors.HEADER}|\n"
+        
+        aux = f"{bcolors.HEADER}|{bcolors.WARNING}Buy Date: {bcolors.ENDC}{self.buy_date}"
+        text += aux + " " * (39 - len(aux)) + f"{bcolors.HEADER}|\n"
         
         aux = f"{bcolors.HEADER}|{bcolors.WARNING}Quantity: {bcolors.ENDC}{self.quantity}"
         text += aux + " " * (39 - len(aux)) + f"{bcolors.HEADER}|\n"
 
         aux = f"{bcolors.HEADER}|{bcolors.WARNING}Buy Price: {bcolors.ENDC}{self.buy_price}"
         text += aux + " " * (39 - len(aux)) + f"{bcolors.HEADER}|\n"
-
-        aux = f"{bcolors.HEADER}|{bcolors.WARNING}Buy Date: {bcolors.ENDC}{self.buy_date}"
+        
+        aux = f"{bcolors.HEADER}|{bcolors.WARNING}Total: {bcolors.ENDC}{total}"
         text += aux + " " * (39 - len(aux)) + f"{bcolors.HEADER}|\n"
+
 
         if self.sell_price != '' or self.sell_date != '':
             aux = f"{bcolors.HEADER}|{bcolors.WARNING}Sell Price: {bcolors.ENDC}{self.sell_price}"
