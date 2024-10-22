@@ -98,16 +98,35 @@ def print_all_owned_stocks(stocks):
     aux = (f"{bcolors.HEADER}|{bcolors.WARNING}{bcolors.BOLD}Spent: {bcolors.ENDC}{spent}")
     text += aux + " " * (44 - len(aux)) + f"{bcolors.HEADER}|\n"
     earned = "{:.2f}".format(earned)
+    diff = float(earned) - float(spent)
+    diff = "{:.2f}".format(diff)
+    profit = float(diff) + float(dividends)
+    profit = "{:.2f}".format(profit)
+
+    dividends = "{:.2f}".format(dividends)
+    aux = (f"{bcolors.HEADER}|{bcolors.WARNING}{bcolors.BOLD}Dividends: {bcolors.OKGREEN}{dividends}")
+    text += aux + " " * (45 - len(aux)) + f"{bcolors.HEADER}|\n"
+    
     if earned >= spent:
         aux = (f"{bcolors.HEADER}|{bcolors.WARNING}{bcolors.BOLD}Wallet: {bcolors.OKGREEN}{earned}")
         text += aux + " " * (45 - len(aux)) + f"{bcolors.HEADER}|\n"
+
+        aux = (f"{bcolors.HEADER}|{bcolors.WARNING}{bcolors.BOLD}Diff: {bcolors.OKGREEN}{diff}")
+        text += aux + " " * (45 - len(aux)) + f"{bcolors.HEADER}|\n"
+        aux = f"{bcolors.HEADER}|{bcolors.WARNING}{bcolors.BOLD}Profit: {bcolors.OKGREEN}{profit}"
+        text += aux + " " * (45 - len(aux)) + f"{bcolors.HEADER}|\n"
+
     else:
         aux = (f"{bcolors.HEADER}|{bcolors.WARNING}{bcolors.BOLD}Wallet: {bcolors.FAIL}{earned}")
         text += aux + " " * (45 - len(aux)) + f"{bcolors.HEADER}|\n"
 
-    dividends = "{:.2f}".format(dividends)
-    aux = (f"{bcolors.HEADER}|{bcolors.WARNING}{bcolors.BOLD}Dividends: {bcolors.OKGREEN}{dividends}")
-    text += aux + " " * (45 - len(aux)) + f"{bcolors.HEADER}|"
+        aux = (f"{bcolors.HEADER}|{bcolors.WARNING}{bcolors.BOLD}Diff: {bcolors.FAIL}{diff}")
+        text += aux + " " * (45 - len(aux)) + f"{bcolors.HEADER}|\n"
+
+        aux = f"{bcolors.HEADER}|{bcolors.WARNING}{bcolors.BOLD}Profit: {bcolors.FAIL}{profit}"
+        text += aux + " " * (45 - len(aux)) + f"{bcolors.HEADER}|\n"
+
+
     print(text)
     print("-" * 27)
     print("\n")
