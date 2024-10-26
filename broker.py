@@ -124,7 +124,7 @@ def print_all_owned_stocks(stocks):
         text += aux + " " * (45 - len(aux)) + f"{bcolors.HEADER}|\n"
 
         aux = f"{bcolors.HEADER}|{bcolors.WARNING}{bcolors.BOLD}Profit: {bcolors.FAIL}{profit}"
-        text += aux + " " * (45 - len(aux)) + f"{bcolors.HEADER}|\n"
+        text += aux + " " * (45 - len(aux)) + f"{bcolors.HEADER}|"
 
 
     print(text)
