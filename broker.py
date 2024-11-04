@@ -88,8 +88,8 @@ def print_all_owned_stocks(stocks):
         print(stock)
         spent += float(stock.buy_price) * float(stock.quantity)
         earned += float(stock.previous_close) * float(stock.quantity)
-        if stock.dividends != '':
-            dividends += float(stock.dividends)
+        if stock.earnings != '':
+            dividends += float(stock.earnings)
    
     
     text = f"{bcolors.HEADER} --------- Resume ---------\n"
